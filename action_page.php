@@ -4,6 +4,9 @@ $username = "root";
 $password = "";
 $dbname = "test";
 
+echo $_GET["id"];
+$id = $_GET["id"];
+
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 // Check connection
@@ -11,7 +14,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 } 
 
-$sql = "SELECT RegisterNumber, MA101, CY100 FROM result";
+$sql = "SELECT RegisterNumber, MA101, CY100 FROM result WHERE RegisterNumber = '$id'";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
