@@ -1,33 +1,80 @@
 <?php
-include 'connection.php';
-$myarray = [];
-$sql="SELECT * FROM Course;";
-$sql1="SELECT * FROM Course_code;";
-$result1 = $con->query($sql1);
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "Result_db";
 
 
-$result = $con->query($sql);
+$coursera = [];
+$coursera1 = [];
+$combined = [];
+$usrnm=$_POST['uname'];
+$flag=0;
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+} 
+
+$sql = "SELECT Course_Code FROM courses;";
+$result = $conn->query($sql);
+
 if ($result->num_rows > 0) {
- while($row = $result->fetch_assoc())
-{
-	
-  // Append only the `player` column rather than the whole $row (which is an array)
-  
-  array_push($myarray,$row['Courses']);
-}
-}
-print_r($myarray);
-
-
-
-
-/*if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
-        echo " RegisterNumber" . $row["RegisterNumber"]. "MA101  " . $row["MA101"]. " CY100 " . $row["CY100"]. "<br>";
+    	  array_push($coursera,$row['Course_Code']);
+        
     }
-} else {
-    echo "0 results";
-}*/
-$con->close();
+}
+$sql1 = "SELECT Course FROM courses;";
+$result1 = $conn->query($sql1);
+
+if ($result1->num_rows > 0) {
+    // output data of each row
+    while($row1 = $result1->fetch_assoc()) {
+    	  array_push($coursera1,$row1['Course']);
+        
+    }
+}
+$sql2 = "SELECT * FROM mytable WHERE RegisterNumber = '$usrnm'; ";
+$result2= $conn->query($sql2);
+
+if ($result2->num_rows > 0) {
+    // output data of each row
+$row2 = $result2->fetch_assoc();
+$flag=1;
+}
+else
+for($i=0;$i<sizeof($coursera);$i++)
+	$combined[$coursera[$i]] = $coursera1[$i];
+
+
+
+
+$conn->close();
+if($flag==1){
+    echo '<table style="border-spacing: 50px;">';
+ echo' <tr>
+    <th style="text-align: left;">Course</th>
+    <th>Grade</th>
+   
+  </tr>';
+  for($i=0;$i<sizeof($coursera);$i++){
+    $abc=$coursera1[$i];
+
+  echo'<tr><td>';
+    echo $coursera1[$i];
+    echo'</td><td>';
+    echo $row2[$coursera[$i]];
+    echo'</td>
+
+
+  </tr>';}
+}
+else
+echo 'ERROR 404 SORRY NO RESULTS FOUND!!!';
 ?>
+     
+     
